@@ -1,0 +1,30 @@
+{% extends "../base.html" %}
+
+
+{% block contenido %}
+
+
+<h1>Detalle producto</h1>
+<table class="table table-bordered">
+    <tr>
+        <th>ID</th>
+        <td>{{ producto.id }}</td>
+    </tr>
+    <tr>
+        <th>Nombre</th>
+        <td>{{ producto.nombre }}</td>
+    </tr>
+    <tr>
+        <th>Precio</th>
+        <td>{{ producto.precio }}</td>
+    </tr>
+    <tr>
+        <th>Stock</th>
+        <td>{{ producto.unidades }}</td>
+    </tr>
+    <tr>
+        <th>Categoría</th>
+        <td>{{ producto.marca }}</td>
+    </tr>
+</table>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "./base.html" %}
+
+
+{% block contenido %}
+
+
+<h1>Compra de productos</h1>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ producto.nombre }}</h5>
+            <p class="card-text">Precio: {{ producto.precio }}</p>
+            <p class="card-text">Stock disponible: {{ producto.unidades }}</p>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="card-body">
+                <div class="mb-3">
+                    
+                    {{form}}
+                </div>
+                <button type="submit" class="btn btn-success">Finalizar compra</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

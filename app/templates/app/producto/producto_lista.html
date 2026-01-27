@@ -1,0 +1,31 @@
+{% extends "../base.html" %}
+
+
+{% block contenido %}
+
+
+<h1>Listado de productos</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Categoría</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for producto in productos %}
+        <tr>
+            <td><a href="{% url 'producto_detalle' producto.pk %}">{{ producto.id }}</a></td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.precio }}</td>
+            <td>{{ producto.unidades }}</td>
+            <td>{{ producto.marca }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+{% endblock %}

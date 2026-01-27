@@ -1,0 +1,21 @@
+{% extends "./base.html" %}
+
+
+{% block contenido %}
+
+
+<h1>Compra de productos</h1>
+<form method="GET">
+    <label>Nombre: </label><input type="text" name="input_nombre">
+</form>
+{% for producto in productos %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ producto.nombre }}</h5>
+            <p class="card-text">Precio: {{ producto.precio }}</p>
+            <p class="card-text">Stock disponible: {{ producto.unidades }}</p>
+            <a href="{% url 'checkout' producto.pk %}" class="btn btn-primary">Comprar</a>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
