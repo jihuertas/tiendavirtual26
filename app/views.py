@@ -8,8 +8,8 @@ from .models import Producto, Compra, Usuario
 from django.urls import reverse_lazy
 from .forms import CompraForm
 from django.contrib import messages
-from django.db.models import Sum
-
+from django.db.models import Sum,Count, Max, Avg, Min
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 class ProductoListView(ListView):
@@ -97,10 +97,31 @@ class PerfilView(TemplateView):
 
         return contexto
          
-    
+@login_required
 def informes(request):
 
     topclientes = Usuario.objects.annotate(total_gastado = Sum("compras__importe")).order_by("-total_gastado")[:10]
+    topcompras=Usuario.objects.annotate(total_compras=Count("compras")).order_by("-total_compras")[:10]
+
+    estadistica = Compra.objects.aggregate(n_total = Count("id"), total_importe = Sum("importe"), max_importe = Max("importe"), min_importe = Min("importe"), avg_importe = Avg("importe"))
+
+    estadistica_clientes = Usuario.objects.annotate(n_total = Count("compras__id"), 
+                                                    total_importe = Sum("compras__importe"), 
+                                                    max_importe = Max("compras__importe"), 
+                                                    min_importe = Min("compras__importe"), 
+                                                    avg_importe = Avg("compras__importe"))
+    
+
+    estadistica_usuario=Compra.objects.filter(usuario=request.user).aggregate(
+                                                            n_total = Count("id"), 
+                                                            total_importe = Sum("importe"), 
+                                                            max_importe = Max("importe"), 
+                                                            min_importe = Min("importe"), 
+                                                            avg_importe = Avg("importe")            
+    )
+    context={"topclientes":topclientes,"topcompras":topcompras, "estadisticas":estadistica,"estadistica_usuario":estadistica_usuario, "estadistica_clientes": estadistica_clientes}
+
+    
 
 
-    return render(request, "app/informes.html" ,{"clientes":topclientes})
+    return render(request, "app/informes.html" ,context)

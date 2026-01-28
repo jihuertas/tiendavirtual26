@@ -6,11 +6,55 @@
 
 <h1>Informes</h1>
 
-    <table>
-        <ul>
-            {% for c in clientes %}
-                <li>{{c}} {{c.total_gastado}}</li>
+<h2>Estadísticas generales</h2>
+<p>Número total de compras:{{estadisticas.n_total}} </p>
+<p>Importe total de compras:  {{estadisticas.total_importe}}</p>
+<p>Importe máximo de compras: {{estadisticas.max_importe}}</p>
+<p>Importe mínimo de compras: {{estadisticas.min_importe}}</p>
+<p>Importe medio de compras: {{estadisticas.avg_importe}}</p>
+
+
+<h2>Estadísticas usuario:{{user.username}}</h2>
+<p>Número total de compras:{{estadistica_usuario.n_total}} </p>
+<p>Importe total de compras:  {{estadistica_usuario.total_importe}}</p>
+<p>Importe máximo de compras: {{estadistica_usuario.max_importe}}</p>
+<p>Importe mínimo de compras: {{estadistica_usuario.min_importe}}</p>
+<p>Importe medio de compras: {{estadistica_usuario.avg_importe}}</p>
+
+<table>
+    <thead>
+        <th>Usuario</th>
+        <th>Nº compras</th>
+        <th>Importe total</th>
+        <th>Importe máximo</th>
+        <th>Importe mínimo</th>
+        <th>Importe medio</th>
+    </thead>
+    <tbody>
+            {% for cliente in estadistica_clientes %}
+            <tr>
+                <td>{{cliente.username}}</td>
+                <td>{{cliente.n_total}}</td>
+                <td>{{cliente.total_importe}}</td>
+                <td>{{cliente.max_importe}}</td>
+                <td>{{cliente.min_importe}}</td>
+                <td>{{cliente.avg_importe}}</td>
+            </tr>
+                
             {% endfor %}
-        </ul>
-    </table>
+    </tbody>
+</table>
+
+<h2>Top ventas</h2>
+<ul>
+    {% for topcliente in topclientes %}
+        <li>{{topcliente}} - Total gastado: {{topcliente.total_gastado}}</li>
+    {% endfor %}
+</ul>
+<h2>Top compras</h2>
+<ul>
+    {% for topcompra in topcompras %}
+        <li>{{topcompra}} - Total compras: {{topcompra.total_compras}} </li>
+    {% endfor %}
+</ul>
 {% endblock %}
