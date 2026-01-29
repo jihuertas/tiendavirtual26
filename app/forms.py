@@ -1,9 +1,6 @@
-from django.forms import ModelForm
-from .models import Compra
+from django.forms import Form
+from django import forms
 
-class CompraForm(ModelForm):
-    
-    class Meta:
-        model = Compra
-        fields = ['unidades']
-
+class CheckoutForm(Form):
+    unidades = forms.IntegerField()
+    codigo = forms.CharField(max_length=10, required=False)

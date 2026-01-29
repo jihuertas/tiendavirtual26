@@ -4,12 +4,13 @@ from django.http import HttpRequest
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, UpdateView, CreateView,  TemplateView, View
-from .models import Producto, Compra, Usuario
+from .models import Producto, Compra, Usuario, Promocion
 from django.urls import reverse_lazy
-from .forms import CompraForm
+from .forms import CheckoutForm
 from django.contrib import messages
 from django.db.models import Sum,Count, Max, Avg, Min
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 
 # Create your views here.
 class ProductoListView(ListView):
@@ -47,7 +48,7 @@ class CheckoutView(View):
     
     def get(self, request, pk):
         producto = Producto.objects.get(pk = pk)
-        form = CompraForm()
+        form = CheckoutForm()
         return render(request,"app/checkout.html", {"producto":producto, "form": form})
         
 
@@ -55,9 +56,22 @@ class CheckoutView(View):
     def post(self, request, pk):
         producto = Producto.objects.get(pk = pk)
         
-        form = CompraForm(request.POST)
+        form = CheckoutForm(request.POST)
         if form.is_valid():
             unidades = form.cleaned_data['unidades']
+            codigo = form.cleaned_data['codigo']
+
+            if codigo:
+                try:
+                    promocion = Promocion.objects.get(codigo=codigo)
+                except Promocion.DoesNotExist:
+                    messages.error(request, "No existe la promoción")
+                    return render(request,"app/checkout.html", {"producto":producto, "form": form})
+
+                if promocion.fecha_inicio > datetime.now().date() or promocion.fecha_fin < datetime.now().date():
+                    messages.error(request, "La promoción no está vigente en fecha")
+                    return render(request,"app/checkout.html", {"producto":producto, "form": form})
+
 
             if producto.unidades < unidades:
                 messages.error(request, "No hay suficiente stock")
@@ -66,6 +80,10 @@ class CheckoutView(View):
                 # Agregamos la compra
                 usuario = request.user
                 importe = unidades * producto.precio
+                if codigo:
+                    importe -= importe * promocion.descuento/100
+                    messages.success(request,'Promoción aplicada')
+                    
                 # Comprobamos si el usuario dispone de saldo suficiente
                 if usuario.saldo >= importe:
                     Compra.objects.create(usuario = request.user, 
